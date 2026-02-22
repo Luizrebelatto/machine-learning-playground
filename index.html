@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detector - Humano ou Cachorro</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #1a1a2e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .call-window {
+            background: #1e1e2e;
+            border-radius: 16px;
+            width: 500px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            border: 1px solid #2a2a3e;
+        }
+
+        .call-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .avatar-icon {
+            width: 36px;
+            height: 36px;
+            background: #3a3a5c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            font-size: 18px;
+        }
+
+        .call-header span {
+            color: #ccc;
+            font-size: 16px;
+        }
+
+        .video-area {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #16162a;
+            border-radius: 12px;
+            overflow: hidden;
+            min-height: 320px;
+        }
+
+        .video-area canvas {
+            border-radius: 12px;
+            width: 100% !important;
+            height: auto !important;
+            display: block;
+        }
+
+        .placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 280px;
+            gap: 16px;
+        }
+
+        .placeholder-circle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: #2a2a44;
+            border: 4px solid #3a3a5c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            color: #555;
+        }
+
+        .placeholder-text {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .btn-allow-camera {
+            margin-top: 8px;
+            padding: 10px 24px;
+            background: #2196f3;
+            color: #fff;
+            border: none;
+            border-radius: 24px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .btn-allow-camera:hover { background: #1976d2; }
+
+        .detection-badge {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            display: none;
+        }
+
+        .detection-badge.human {
+            background: rgba(33, 150, 243, 0.85);
+            color: #fff;
+        }
+
+        .detection-badge.dog {
+            background: rgba(255, 152, 0, 0.85);
+            color: #fff;
+        }
+
+        .timer {
+            text-align: center;
+            color: #aaa;
+            font-size: 18px;
+            letter-spacing: 3px;
+            margin: 16px 0;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 4px;
+        }
+
+        .btn {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+
+        .btn:hover { transform: scale(1.08); opacity: 0.9; }
+
+        .btn-start { background: #2196f3; color: #fff; }
+        .btn-end   { background: #e53935; color: #fff; }
+
+        .confidence-bar-container {
+            margin-top: 16px;
+            display: none;
+        }
+
+        .confidence-bar-container.visible { display: block; }
+
+        .confidence-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .confidence-label {
+            color: #aaa;
+            font-size: 13px;
+            width: 70px;
+        }
+
+        .bar-bg {
+            flex: 1;
+            background: #2a2a44;
+            border-radius: 6px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.3s;
+        }
+
+        .bar-fill.human { background: #2196f3; }
+        .bar-fill.dog   { background: #ff9800; }
+
+        .bar-pct {
+            color: #888;
+            font-size: 12px;
+            width: 36px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+
+<div class="call-window">
+    <div class="call-header">
+        <div class="avatar-icon">&#128100;</div>
+        <span>Detector: Humano ou Cachorro</span>
+    </div>
+
+    <div class="video-area" id="video-area">
+        <div class="placeholder" id="placeholder">
+            <div class="placeholder-circle">&#128247;</div>
+            <div class="placeholder-text">Permita o acesso à câmera para iniciar</div>
+            <button class="btn-allow-camera" onclick="init()">&#128247; Permitir câmera</button>
+        </div>
+        <div id="webcam-container"></div>
+        <div class="detection-badge" id="detection-badge"></div>
+    </div>
+
+    <div class="timer" id="timer">00 : 00</div>
+
+    <div class="controls">
+        <button class="btn btn-start" onclick="init()" title="Iniciar">&#127909;</button>
+    </div>
+
+    <div class="confidence-bar-container" id="confidence-bars">
+        <div class="confidence-row">
+            <span class="confidence-label">&#128100; Humano</span>
+            <div class="bar-bg"><div class="bar-fill human" id="bar-human" style="width:0%"></div></div>
+            <span class="bar-pct" id="pct-human">0%</span>
+        </div>
+        <div class="confidence-row">
+            <span class="confidence-label">&#128054; Cachorro</span>
+            <div class="bar-bg"><div class="bar-fill dog" id="bar-dog" style="width:0%"></div></div>
+            <span class="bar-pct" id="pct-dog">0%</span>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+<script>
+    const URL = "https://teachablemachine.withgoogle.com/models/8lymfZSoR/";
+    let model, webcam, maxPredictions;
+    let running = false;
+    let timerInterval, seconds = 0;
+
+    function formatTime(s) {
+        const m = Math.floor(s / 60).toString().padStart(2, '0');
+        const sec = (s % 60).toString().padStart(2, '0');
+        return `${m} : ${sec}`;
+    }
+
+    async function init() {
+        if (running) return;
+
+        const modelURL = URL + "model.json";
+        const metadataURL = URL + "metadata.json";
+
+        model = await tmImage.load(modelURL, metadataURL);
+        maxPredictions = model.getTotalClasses();
+
+        const flip = true;
+        webcam = new tmImage.Webcam(460, 300, flip);
+        await webcam.setup();
+        await webcam.play();
+
+        document.getElementById("placeholder").style.display = "none";
+        document.getElementById("webcam-container").appendChild(webcam.canvas);
+        document.getElementById("confidence-bars").classList.add("visible");
+
+        running = true;
+        seconds = 0;
+        timerInterval = setInterval(() => {
+            seconds++;
+            document.getElementById("timer").textContent = formatTime(seconds);
+        }, 1000);
+
+        window.requestAnimationFrame(loop);
+    }
+
+    async function loop() {
+        if (!running) return;
+        webcam.update();
+        await predict();
+        window.requestAnimationFrame(loop);
+    }
+
+    async function predict() {
+        const prediction = await model.predict(webcam.canvas);
+
+        let humanProb = 0, dogProb = 0;
+        let topClass = '', topProb = 0;
+
+        for (let i = 0; i < prediction.length; i++) {
+            const name = prediction[i].className.toLowerCase();
+            const prob = prediction[i].probability;
+
+            if (name.includes('human') || name.includes('humano') || name.includes('pessoa') || name.includes('person')) {
+                humanProb = prob;
+            } else if (name.includes('dog') || name.includes('cachorro') || name.includes('cao') || name.includes('cão')) {
+                dogProb = prob;
+            }
+
+            if (prob > topProb) { topProb = prob; topClass = prediction[i].className.toLowerCase(); }
+        }
+
+        if (humanProb === 0 && dogProb === 0 && prediction.length >= 2) {
+            humanProb = prediction[0].probability;
+            dogProb = prediction[1].probability;
+            topClass = humanProb >= dogProb ? 'human' : 'dog';
+        }
+
+        const badge = document.getElementById("detection-badge");
+        badge.style.display = "block";
+
+        const isHuman = humanProb >= dogProb;
+        if (isHuman) {
+            badge.textContent = "👤 Humano";
+            badge.className = "detection-badge human";
+        } else {
+            badge.textContent = "🐶 Cachorro";
+            badge.className = "detection-badge dog";
+        }
+
+        const hPct = Math.round(humanProb * 100);
+        const dPct = Math.round(dogProb * 100);
+
+        document.getElementById("bar-human").style.width = hPct + "%";
+        document.getElementById("pct-human").textContent = hPct + "%";
+        document.getElementById("bar-dog").style.width = dPct + "%";
+        document.getElementById("pct-dog").textContent = dPct + "%";
+    }
+
+    function stopCam() {
+        if (!running) return;
+        running = false;
+        clearInterval(timerInterval);
+        webcam.stop();
+        document.getElementById("webcam-container").innerHTML = "";
+        document.getElementById("placeholder").style.display = "flex";
+        document.getElementById("detection-badge").style.display = "none";
+        document.getElementById("confidence-bars").classList.remove("visible");
+        document.getElementById("timer").textContent = "00 : 00";
+        seconds = 0;
+    }
+</script>
+</body>
+</html>
