@@ -9,7 +9,7 @@ import tf from '@tensorflow/tfjs-node';
 // const categories = [
 // 	"Luiz", "premium",
 // 	"Gabriel", "medium",
-// 	"Carlos", "basic"
+// 	"Fred", "basic"
 // ]
 
 async function trainModel(inputXs, outputYs){
@@ -48,6 +48,17 @@ async function trainModel(inputXs, outputYs){
 
 }
 
+async function predict(model, person){
+    // transforma o array em tensor
+    const tfInput = tf.tensor2d(person)
+    // faz a previsao, output sera um vetor de 3 probabilidades, uma para cada categoria
+    const pred = model.predict(tfInput)
+    const predArray = await pred.array()
+    return predArray.map((probability, index) => {
+        probability, index
+    })
+}
+
 const peopleTensorNormalized = [
 	[1, 1, 0, 0, 1, 0, 0], // Luiz
 	[0.11, 0, 1, 0, 0, 1, 0], // Gabriel
@@ -58,10 +69,16 @@ const labels = ["premium", "medium", "basic"]
 const tensorLabels = [
 	[1, 0, 0], // Luiz - premium
 	[0, 1, 0], // Gabriel - medium 
-	[0, 0, 1] // Carlos - basic
+	[0, 0, 1] // Fred - basic
 ]
 
 const inputXs = tf.tensor2d(peopleTensorNormalized)
 const outputYs = tf.tensor2d(tensorLabels)
 
-const model = trainModel(inputXs, outputYs)
+const model = await trainModel(inputXs, outputYs)
+
+// pessoas que nao estava no treinamento, para testar o modelo
+const person = { name: "Pedro", age: 24, color: "pink", localization: "porto alegre" };
+const personTensorNormalized = [[0.1, 0, 0, 1, 0, 0, 1]]
+
+await predict(model, personTensorNormalized)
