@@ -54,9 +54,9 @@ async function predict(model, person){
     // faz a previsao, output sera um vetor de 3 probabilidades, uma para cada categoria
     const pred = model.predict(tfInput)
     const predArray = await pred.array()
-    return predArray.map((probability, index) => {
-        probability, index
-    })
+    return predArray[0].map((prob, index) => ({
+        prob, index
+    }))
 }
 
 const peopleTensorNormalized = [
@@ -65,7 +65,7 @@ const peopleTensorNormalized = [
 	[0, 0, 0, 1, 0, 0, 1], // Fred
 ]
 
-const labels = ["premium", "medium", "basic"]
+const labels = ["Premium", "Medium", "Basic"]
 const tensorLabels = [
 	[1, 0, 0], // Luiz - premium
 	[0, 1, 0], // Gabriel - medium 
@@ -81,4 +81,7 @@ const model = await trainModel(inputXs, outputYs)
 const person = { name: "Pedro", age: 24, color: "pink", localization: "porto alegre" };
 const personTensorNormalized = [[0.1, 0, 0, 1, 0, 0, 1]]
 
-await predict(model, personTensorNormalized)
+const predictions = await predict(model, personTensorNormalized)
+const result = predictions.sort((a, b) => b.prob - a.prob).map(p => `${labels[p.index]} (${(p.prob * 100).toFixed(2)}%)`).join("\n")
+
+console.log(result)
