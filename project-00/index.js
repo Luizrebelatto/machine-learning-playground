@@ -1,17 +1,5 @@
 import tf from '@tensorflow/tfjs-node';
 
-// const people = [
-// 	{ name: "Luiz", age: 30, color: "blue", localization: "cachoeirinha" },
-// 	{ name: "Gabriel", age: 22, color: "yellow", localization: "gravatai" },
-// 	{ name: "fred", age: 21, color: "pink", localization: "porto alegre" }
-// ]
-
-// const categories = [
-// 	"Luiz", "premium",
-// 	"Gabriel", "medium",
-// 	"Fred", "basic"
-// ]
-
 async function trainModel(inputXs, outputYs){
     const model = tf.sequential();
     model.add(tf.layers.dense({ inputShape: [7], units: 80, activation: 'relu' }));
