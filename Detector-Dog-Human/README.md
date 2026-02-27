@@ -21,6 +21,9 @@ A real-time webcam classifier that detects whether it sees a **human** or a **do
 
 
 
-https://github.com/user-attachments/assets/b276e703-75cc-4f9f-b187-11867319bcb9
+
+
+https://github.com/user-attachments/assets/3ec7d79d-460f-4df4-a225-0058d736a6e2
+
 
 
