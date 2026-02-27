@@ -18,3 +18,9 @@ A real-time webcam classifier that detects whether it sees a **human** or a **do
 - TensorFlow.js
 - Teachable Machine (Image)
 - Vanilla HTML/CSS/JS
+
+
+
+https://github.com/user-attachments/assets/b276e703-75cc-4f9f-b187-11867319bcb9
+
+
