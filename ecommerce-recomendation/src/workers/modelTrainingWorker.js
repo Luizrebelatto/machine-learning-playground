@@ -29,6 +29,17 @@ export function makeContext(catalog, users){
         })
     )
     
+    const midAge = (minAge + maxAge) / 2
+    const ageSums = {}
+    const ageCounts = {}
+
+    users.forEach(user => {
+        user.purchases.forEach(purchase => {
+            ageSums[purchase.name] = (ageSums[purchase.name] || 0) + user.age
+            ageCounts[purchase.name] = (ageCounts[purchase.name] || 0) + 1
+        })
+    });
+    debugger
 }
 
 async function trainModel({ users }) {
