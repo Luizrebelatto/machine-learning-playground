@@ -6,17 +6,17 @@
         "purchases": [
             {
                 "id": 1,
-                "name": "Wireless Headphones",
-                "category": "electronics",
+                "name": "Fones de Ouvido Sem Fio",
+                "category": "eletrônicos",
                 "price": 129.99,
-                "color": "black"
+                "color": "preto"
             },
             {
                 "id": 2,
-                "name": "Smartwatch",
-                "category": "electronics",
+                "name": "Relógio Inteligente",
+                "category": "eletrônicos",
                 "price": 199.99,
-                "color": "silver"
+                "color": "prata"
             }
         ]
     },
@@ -27,17 +27,17 @@
         "purchases": [
             {
                 "id": 1,
-                "name": "Wireless Headphones",
-                "category": "electronics",
+                "name": "Fones de Ouvido Sem Fio",
+                "category": "eletrônicos",
                 "price": 129.99,
-                "color": "black"
+                "color": "preto"
             },
             {
                 "id": 3,
-                "name": "Bluetooth Speaker",
-                "category": "electronics",
+                "name": "Caixa de Som Bluetooth",
+                "category": "eletrônicos",
                 "price": 89.99,
-                "color": "blue"
+                "color": "azul"
             }
         ]
     },
@@ -48,17 +48,17 @@
         "purchases": [
             {
                 "id": 4,
-                "name": "Printed T-shirt",
+                "name": "Camiseta Estampada",
                 "category": "vestuário",
                 "price": 49.99,
-                "color": "white"
+                "color": "vermelho"
             },
             {
                 "id": 5,
-                "name": "Slim Jeans",
+                "name": "Calça Jeans Slim",
                 "category": "vestuário",
                 "price": 99.99,
-                "color": "blue"
+                "color": "azul"
             }
         ]
     },
@@ -69,24 +69,24 @@
         "purchases": [
             {
                 "id": 2,
-                "name": "Smartwatch",
-                "category": "electronics",
+                "name": "Relógio Inteligente",
+                "category": "eletrônicos",
                 "price": 199.99,
-                "color": "silver"
+                "color": "prata"
             },
             {
                 "id": 3,
-                "name": "Bluetooth Speaker",
-                "category": "electronics",
+                "name": "Caixa de Som Bluetooth",
+                "category": "eletrônicos",
                 "price": 89.99,
-                "color": "blue"
+                "color": "azul"
             },
             {
                 "id": 6,
-                "name": "Sports Sneakers",
-                "category": "shoes",
+                "name": "Tênis Esportivo",
+                "category": "calçados",
                 "price": 149.99,
-                "color": "red"
+                "color": "branco"
             }
         ]
     },
@@ -97,24 +97,24 @@
         "purchases": [
             {
                 "id": 1,
-                "name": "Wireless Headphones",
-                "category": "electronics",
+                "name": "Fones de Ouvido Sem Fio",
+                "category": "eletrônicos",
                 "price": 129.99,
-                "color": "black"
+                "color": "preto"
             },
             {
                 "id": 6,
-                "name": "Sports Sneakers",
-                "category": "shoes",
+                "name": "Tênis Esportivo",
+                "category": "calçados",
                 "price": 149.99,
-                "color": "red"
+                "color": "branco"
             },
             {
                 "id": 5,
-                "name": "Slim Jeans",
+                "name": "Calça Jeans Slim",
                 "category": "vestuário",
                 "price": 99.99,
-                "color": "blue"
+                "color": "azul"
             }
         ]
     }
