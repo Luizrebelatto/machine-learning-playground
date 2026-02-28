@@ -7,9 +7,14 @@ It is a simple system to add label `premium`, `medium`, `basic` to a new user
 
 ### Techs
 - Javascript
-- node 
+- node 22
 - Tensor Flow
 
+### Run:
+- clone repo `https://github.com/Luizrebelatto/machine-learning-playground`
+- `cd project-00`
+- `nvm use 22`
+- run `npm run start`
 
 ### Data i used to train
 ```javascript
@@ -132,4 +137,24 @@ const predictions = await predict(model, personTensorNormalized)
 const result = predictions.sort((a, b) => b.prob - a.prob).map(p => `${labels[p.index]} (${(p.prob * 100).toFixed(2)}%)`).join("\n")
 
 console.log(result)
+```
+
+### Epoch Logs
+```
+Epoch: 0, Loss: 1.1273095607757568, Accuracy: 0.3333333432674408
+Epoch: 1, Loss: 1.1107685565948486, Accuracy: 0.3333333432674408
+Epoch: 2, Loss: 1.0943653583526611, Accuracy: 0.3333333432674408
+Epoch: 3, Loss: 1.0781630277633667, Accuracy: 0.3333333432674408
+Epoch: 4, Loss: 1.0622165203094482, Accuracy: 0.3333333432674408
+Epoch: 5, Loss: 1.0464357137680054, Accuracy: 0.6666666865348816
+Epoch: 6, Loss: 1.030836820602417, Accuracy: 0.6666666865348816
+Epoch: 7, Loss: 1.0153907537460327, Accuracy: 0.6666666865348816
+Epoch: 8, Loss: 1.0001028776168823, Accuracy: 0.6666666865348816
+```
+
+### Result
+```
+Basic (87.45%)
+Premium (7.05%)
+Medium (5.51%)
 ```
