@@ -4,9 +4,38 @@ import { workerEvents } from '../events/constants.js';
 console.log('Model training worker initialized');
 let _globalCtx = {};
 
+export function makeContext(catalog, users){
+    const ages = users.map(user => user.age);
+    const prices = catalog.map(product => product.price);
+
+    const minAge = Math.min(...ages);
+    const maxAge = Math.max(...ages);
+
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+
+    const colors = [...new Set(catalog.map(product => product.color))]
+    const categories = [...new Set(catalog.map(product => product.category))]
+
+    const colorIndex = Object.entries(
+        colors.map((color, index) => {
+            return [color, index]
+        })
+    )
+
+    const categoriesIndex = Object.entries(
+        categories.map((category, index) => {
+            return [category, index]
+        })
+    )
+    
+}
 
 async function trainModel({ users }) {
     console.log('Training model with users:', users)
+    const catalog = await (await fetch("../../data/products.json")).json();
+    
+    const context = makeContext(catalog, users)
 
     postMessage({ type: workerEvents.progressUpdate, progress: { progress: 50 } });
     postMessage({
