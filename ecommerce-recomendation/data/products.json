@@ -1,0 +1,72 @@
+[
+    {
+        "id": 1,
+        "name": "Wireless Headphones",
+        "category": "electronics",
+        "price": 129.99,
+        "color": "black"
+    },
+    {
+        "id": 2,
+        "name": "Smartwatch",
+        "category": "electronics",
+        "price": 199.99,
+        "color": "silver"
+    },
+    {
+        "id": 3,
+        "name": "Bluetooth Speaker",
+        "category": "electronics",
+        "price": 89.99,
+        "color": "blue"
+    },
+    {
+        "id": 4,
+        "name": "Printed T-shirt",
+        "category": "vestuário",
+        "price": 49.99,
+        "color": "white"
+    },
+    {
+        "id": 5,
+        "name": "Slim Jeans",
+        "category": "vestuário",
+        "price": 99.99,
+        "color": "blue"
+    },
+    {
+        "id": 6,
+        "name": "Sports Sneakers",
+        "category": "shoes",
+        "price": 149.99,
+        "color": "red"
+    },
+    {
+        "id": 7,
+        "name": "Casual Sandals",
+        "category": "shoes",
+        "price": 69.99,
+        "color": "beige"
+    },
+    {
+        "id": 8,
+        "name": "Stylish Cap",
+        "category": "accessories",
+        "price": 39.99,
+        "color": "black"
+    },
+    {
+        "id": 9,
+        "name": "Executive Backpack",
+        "category": "accessories",
+        "price": 159.99,
+        "color": "gray"
+    },
+    {
+        "id": 10,
+        "name": "Sunglasses",
+        "category": "accessories",
+        "price": 89.99,
+        "color": "brown"
+    }
+]
