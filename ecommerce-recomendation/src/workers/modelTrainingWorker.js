@@ -4,6 +4,10 @@ import { workerEvents } from '../events/constants.js';
 console.log('Model training worker initialized');
 let _globalCtx = {};
 
+function normalize(value, min, max){
+    return (value - min) / ((max - min) || 1)
+}
+
 export function makeContext(catalog, users){
     const ages = users.map(user => user.age);
     const prices = catalog.map(product => product.price);
@@ -43,10 +47,10 @@ export function makeContext(catalog, users){
     const productAvgAgeNormalized = Object.fromEntries(
         catalog.map(product => {
             const avg = ageCounts[product.name] ? ageSums[product.name] / ageCounts[product.name] : midAge;
-
-            debugger
+            return [product.name, normalize(avg, minAge, maxAge)]
         })
-    ) 
+    )
+    debugger 
 }
 
 async function trainModel({ users }) {
