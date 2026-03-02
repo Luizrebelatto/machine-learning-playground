@@ -50,7 +50,18 @@ export function makeContext(catalog, users){
             return [product.name, normalize(avg, minAge, maxAge)]
         })
     )
-    debugger 
+    
+    return {
+        catalog,
+        users,
+        colorIndex,
+        categoriesIndex,
+        minAge, maxAge,
+        minPrice, maxPrice,
+        numCategories: categories.length,
+        numColors: colors.length,
+        dimension: 2 + categories.length + colors.length
+    } 
 }
 
 async function trainModel({ users }) {
@@ -58,7 +69,7 @@ async function trainModel({ users }) {
     const catalog = await (await fetch("../../data/products.json")).json();
     
     const context = makeContext(catalog, users)
-
+    debugger
     postMessage({ type: workerEvents.progressUpdate, progress: { progress: 50 } });
     postMessage({
         type: workerEvents.trainingLog,
