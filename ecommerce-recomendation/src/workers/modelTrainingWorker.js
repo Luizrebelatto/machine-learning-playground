@@ -39,7 +39,14 @@ export function makeContext(catalog, users){
             ageCounts[purchase.name] = (ageCounts[purchase.name] || 0) + 1
         })
     });
-    debugger
+    
+    const productAvgAgeNormalized = Object.fromEntries(
+        catalog.map(product => {
+            const avg = ageCounts[product.name] ? ageSums[product.name] / ageCounts[product.name] : midAge;
+
+            debugger
+        })
+    ) 
 }
 
 async function trainModel({ users }) {
