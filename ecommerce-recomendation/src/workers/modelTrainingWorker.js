@@ -68,7 +68,7 @@ export function makeContext(catalog, users){
         productAvgAgeNormalized,
         numCategories: categories.length,
         numColors: colors.length,
-        dimension: 2 + categories.length + colors.length
+        dimensions: 2 + categories.length + colors.length
     } 
 }
 
@@ -81,6 +81,24 @@ function encodeProduct(product, context){
     const color = oneHotWeighted(context.colorsIndex[product.color], context.numColors, WEIGHTS.color);
 
     return tf.concat1d([price, age, category, color ])
+}
+
+function encodeUser(user, context){
+    if(user.purchases.length){
+        return tf.stack(
+            user.purchases.map(product => encodeProduct(product, context))
+        ).mean(0)
+        .reshape([
+            1, context.dimensions
+        ])
+    }
+}
+
+function createTrainingData(context){
+    context.users.forEach(user => {
+        const userVector = encodeUser(user, context).dataSync()
+        debugger
+    })
 }
 
 async function trainModel({ users }) {
@@ -97,6 +115,8 @@ async function trainModel({ users }) {
     })
 
     _globalCtx = context
+
+    const trainingData = createTrainingData(context)
     postMessage({ type: workerEvents.progressUpdate, progress: { progress: 50 } });
     postMessage({
         type: workerEvents.trainingLog,
