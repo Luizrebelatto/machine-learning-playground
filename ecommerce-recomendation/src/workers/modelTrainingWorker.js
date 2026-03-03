@@ -95,10 +95,24 @@ function encodeUser(user, context){
 }
 
 function createTrainingData(context){
+    const inputs = []
+    const labels = []
     context.users.forEach(user => {
-        const userVector = encodeUser(user, context).dataSync()
-        debugger
+        const userVector = encodeUser(user, context).dataSync();
+        context.products.forEach(product => {
+            const productVector = encodeProduct(product, context).dataSync()
+            const label = user.purchases.some(
+                purchase => purchase.name === product.name ? 1 : 0
+            )
+            inputs.push([...userVector, ...productVector])
+            labels.push(label)
+        })
     })
+    return {
+        xs: tf.tensor2d(inputs),
+        ys: tf.tensor2d(labels, [labels.length, 1]),
+        inputDimension: context.dimensions * 2 // userVector + ProductVector
+    }
 }
 
 async function trainModel({ users }) {
@@ -116,7 +130,7 @@ async function trainModel({ users }) {
 
     _globalCtx = context
 
-    const trainingData = createTrainingData(context)
+    const trainData = createTrainingData(context)
     postMessage({ type: workerEvents.progressUpdate, progress: { progress: 50 } });
     postMessage({
         type: workerEvents.trainingLog,
