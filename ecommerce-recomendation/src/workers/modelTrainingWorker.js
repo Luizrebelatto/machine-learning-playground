@@ -154,7 +154,12 @@ async function configureNeuralNetAndTrain(trainData){
         shuffle: true,
         callbacks: {
             onEpochEnd: (epoch, logs) => {
-                debugger
+                postMessage({
+                    type: workerEvents.trainingLog,
+                    epoch: epoch,
+                    loss: logs.loss,
+                    accuracy: logs.acc
+                });
             }  
         }
     })
@@ -176,22 +181,9 @@ async function trainModel({ users }) {
     _globalCtx = context
 
     const trainData = createTrainingData(context)
-    _model = configureNeuralNetAndTrain(trainData)
+    _model = await  configureNeuralNetAndTrain(trainData)
 
     postMessage({ type: workerEvents.progressUpdate, progress: { progress: 50 } });
-    postMessage({
-        type: workerEvents.trainingLog,
-        epoch: 1,
-        loss: 1,
-        accuracy: 1
-    });
-
-    setTimeout(() => {
-        postMessage({ type: workerEvents.progressUpdate, progress: { progress: 100 } });
-        postMessage({ type: workerEvents.trainingComplete });
-    }, 1000);
-
-
 }
 function recommend(user, ctx) {
     console.log('will recommend for user:', user)
