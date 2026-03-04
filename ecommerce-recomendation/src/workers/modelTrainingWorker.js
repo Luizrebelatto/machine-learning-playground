@@ -3,6 +3,7 @@ import { workerEvents } from '../events/constants.js';
 
 console.log('Model training worker initialized');
 let _globalCtx = {};
+let _model = {}
 const WEIGHTS = {
     category: 0.4,
     color: 0.3,
@@ -115,6 +116,50 @@ function createTrainingData(context){
     }
 }
 
+async function configureNeuralNetAndTrain(trainData){
+    const model = tf.sequential();
+
+    model.add(
+        tf.layers.dense({
+            inputShape: [trainData.inputDimension],
+            units: 128,
+            activation: 'relu'
+        })
+    )
+
+    model.add(
+        tf.layers.dense({
+            units: 64,
+            activation: 'relu'
+        })
+    )
+
+    model.add(
+        tf.layers.dense({
+            units: 32,
+            activation: 'relu'
+        })
+    )
+
+    model.add(tf.layers.dense({ units: 1, activation: 'sigmoid' }))
+    model.compile({
+        optimizer: tf.train.adam(0.01),
+        loss: 'binaryCrossentropy',
+        metrics: ['accuracy']
+    })
+    
+    await model.fit(trainData.xs, trainData.ys, {
+        epochs: 100,
+        batchSize: 32,
+        shuffle: true,
+        callbacks: {
+            onEpochEnd: (epoch, logs) => {
+                debugger
+            }  
+        }
+    })
+}
+
 async function trainModel({ users }) {
     console.log('Training model with users:', users)
     const products = await (await fetch("../../data/products.json")).json();
@@ -131,6 +176,8 @@ async function trainModel({ users }) {
     _globalCtx = context
 
     const trainData = createTrainingData(context)
+    _model = configureNeuralNetAndTrain(trainData)
+
     postMessage({ type: workerEvents.progressUpdate, progress: { progress: 50 } });
     postMessage({
         type: workerEvents.trainingLog,
