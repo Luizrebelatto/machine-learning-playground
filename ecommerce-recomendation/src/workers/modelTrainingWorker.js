@@ -210,12 +210,18 @@ function recommend(user) {
     const inputTensor = tf.tensor2d(inputs);
     const predictions = _model.predict(inputTensor);
     const scores = predictions.dataSync();
-    debugger
-    // postMessage({
-    //     type: workerEvents.recommend,
-    //     user,
-    //     recommendations: []
-    // });
+
+    const recommendations = context.productVectors.map((item, index) => {
+        return {
+            ...item.meta,
+            name: item.name,
+            score: scores[index],
+
+        }
+    })
+    const sortedItems = recommendations.sort((a, b) => b.score - a.score)
+
+    postMessage({ type: workerEvents.recommend, user, recommendations: sortedItems });
 }
 
 
