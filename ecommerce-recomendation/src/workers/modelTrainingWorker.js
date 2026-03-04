@@ -93,6 +93,14 @@ function encodeUser(user, context){
             1, context.dimensions
         ])
     }
+    return tf.concat1d([
+        tf.zeros([1]), // price is ignored
+        tf.tensor1d([
+            normalize(user.age, context.minAge, context.maxAge) * WEIGHTS.age
+        ]),
+        tf.zeros([context.numCategories]), // ignore category
+
+    ]).reshape([1, context.dimensions])
 }
 
 function createTrainingData(context){
