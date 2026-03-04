@@ -208,6 +208,8 @@ function recommend(user) {
     })
 
     const inputTensor = tf.tensor2d(inputs);
+    const predictions = _model.predict(inputTensor);
+    const scores = predictions.dataSync();
     debugger
     // postMessage({
     //     type: workerEvents.recommend,
