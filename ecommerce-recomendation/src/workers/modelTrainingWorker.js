@@ -3,7 +3,7 @@ import { workerEvents } from '../events/constants.js';
 
 console.log('Model training worker initialized');
 let _globalCtx = {};
-let _model = {}
+let _model = null
 const WEIGHTS = {
     category: 0.4,
     color: 0.3,
@@ -94,13 +94,14 @@ function encodeUser(user, context){
         ])
     }
     return tf.concat1d([
-        tf.zeros([1]), // price is ignored
-        tf.tensor1d([
-            normalize(user.age, context.minAge, context.maxAge) * WEIGHTS.age
-        ]),
-        tf.zeros([context.numCategories]), // ignore category
-
-    ]).reshape([1, context.dimensions])
+            tf.zeros([1]), // price is ignored
+            tf.tensor1d([
+                normalize(user.age, context.minAge, context.maxAge) * WEIGHTS.age
+            ]),
+            tf.zeros([context.numCategories]), // ignore category
+            tf.zeros([context.numColors]), // ignore colors
+        ]
+    ).reshape([1, context.dimensions])
 }
 
 function createTrainingData(context){
@@ -172,6 +173,7 @@ async function configureNeuralNetAndTrain(trainData){
             }  
         }
     })
+    return model
 }
 
 async function trainModel({ users }) {
@@ -190,12 +192,23 @@ async function trainModel({ users }) {
     _globalCtx = context
 
     const trainData = createTrainingData(context)
-    _model = await  configureNeuralNetAndTrain(trainData)
+    _model = await configureNeuralNetAndTrain(trainData)
 
-    postMessage({ type: workerEvents.progressUpdate, progress: { progress: 50 } });
+    postMessage({ type: workerEvents.progressUpdate, progress: { progress: 100 } });
+    postMessage({ type: workerEvents.trainingComplete });
 }
-function recommend(user, ctx) {
-    console.log('will recommend for user:', user)
+function recommend(user) {
+    if(!_model) return;
+    
+    const context = _globalCtx
+    const userVector = encodeUser(user, context).dataSync()
+    
+    const inputs = context.productVectors.map(({ vector }) => {
+        return [...userVector, ...vector]
+    })
+
+    const inputTensor = tf.tensor2d(inputs);
+    debugger
     // postMessage({
     //     type: workerEvents.recommend,
     //     user,
