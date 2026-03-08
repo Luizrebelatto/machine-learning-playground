@@ -9,6 +9,12 @@ async function loadModelAndLabels() {
     await tf.ready()
     _labels = await (await fetch(LABELS_PATH)).json()
     _model = await tf.loadGraphModel(MODEL_PATH)
+
+    const dummyInput = tf.ones(_model.inputs[0].shape)
+    await _model.executeAsync(dummyInput)
+    tf.dispose(dummyInput)
+
+    postMessage({ type: 'model-loaded' })
 }
 loadModelAndLabels()
 
