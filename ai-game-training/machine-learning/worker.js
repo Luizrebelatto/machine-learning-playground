@@ -46,6 +46,13 @@ async function runInference(tensor){
     }
 }
 
+function* processPrediction({ boxes, scores, classes }, width, height){
+    for(let index = 0; index < scores.length; index++){
+        if(scores[index] < 0.4) continue
+        yield _labels[classes[index]]
+    }
+}
+
 loadModelAndLabels()
 
 self.onmessage = async ({ data }) => {
@@ -55,7 +62,12 @@ self.onmessage = async ({ data }) => {
     const input = preprocessImage(data.image)
     const { width, height } = data.image
 
-    const inferenceResults = await runInference(input)
+    const inferenceResults = await runInference(input);
+
+    for (const prediction of processPrediction(inferenceResults, width, height)){
+        console.log({ prediction })
+    }
+    
     
     postMessage({
         type: 'prediction',
