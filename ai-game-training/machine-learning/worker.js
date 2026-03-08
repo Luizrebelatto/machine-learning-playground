@@ -17,8 +17,6 @@ async function loadModelAndLabels() {
 
     postMessage({ type: 'model-loaded' })
 }
-loadModelAndLabels()
-
 function preprocessImage(input){
     return tf.tidy(() => {
         const image = tf.browser.fromPixels(input);
@@ -27,14 +25,38 @@ function preprocessImage(input){
     })
 }
 
+async function runInference(tensor){
+    const output = await _model.executeAsync(tensor);
+    tf.dispose(tensor);
+    
+    const [boxes, scores, classes] = output.slice(0, 3);
+    const [boxesData, scoresData, classesData] = await Promise.all(
+        [
+            boxes.data(),
+            scores.data(),
+            classes.data()
+        ]
+    )
+    output.forEach(item => item.dispose())
+    
+    return {
+        boxes: boxesData,
+        classes: classesData,
+        scores: scoresData
+    }
+}
+
+loadModelAndLabels()
 
 self.onmessage = async ({ data }) => {
     if (data.type !== 'predict') return
-    if (_model) return;
+    if (!_model) return;
 
     const input = preprocessImage(data.image)
-    
+    const { width, height } = data.image
 
+    const inferenceResults = await runInference(input)
+    
     postMessage({
         type: 'prediction',
         x: 400,
