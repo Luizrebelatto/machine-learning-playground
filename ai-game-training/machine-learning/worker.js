@@ -2,6 +2,7 @@ importScripts('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest');
 
 const MODEL_PATH = `yolov5n_web_model/model.json`;
 const LABELS_PATH = `yolov5n_web_model/labels.json`;
+const INPUT_MODEL_DIMENSIONS = 640;
 
 let _labels = []
 let _model = null
@@ -18,9 +19,21 @@ async function loadModelAndLabels() {
 }
 loadModelAndLabels()
 
+function preprocessImage(input){
+    return tf.tidy(() => {
+        const image = tf.browser.fromPixels(input);
+
+        return tf.image.resizeBilinear(image, [INPUT_MODEL_DIMENSIONS, INPUT_MODEL_DIMENSIONS]).div(255).expandDims(0)
+    })
+}
+
 
 self.onmessage = async ({ data }) => {
     if (data.type !== 'predict') return
+    if (_model) return;
+
+    const input = preprocessImage(data.image)
+    
 
     postMessage({
         type: 'prediction',
