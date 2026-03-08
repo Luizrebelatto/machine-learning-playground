@@ -3,6 +3,7 @@ importScripts('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest');
 const MODEL_PATH = `yolov5n_web_model/model.json`;
 const LABELS_PATH = `yolov5n_web_model/labels.json`;
 const INPUT_MODEL_DIMENSIONS = 640;
+const CLASS_TRESHOLD = 0.4;
 
 let _labels = []
 let _model = null
@@ -48,8 +49,27 @@ async function runInference(tensor){
 
 function* processPrediction({ boxes, scores, classes }, width, height){
     for(let index = 0; index < scores.length; index++){
-        if(scores[index] < 0.4) continue
-        yield _labels[classes[index]]
+        if(scores[index] < CLASS_TRESHOLD) continue
+        const label = _labels[classes[index]]
+
+        if(label !== "kite") continue
+        let [x1, y1, x2, y2] = boxes.slice(index * 4, (index + 1) * 4);
+
+        x1 *= width
+        x2 *= width
+        y1 *= height
+        y2 *= height
+
+        const boxWidth = x2 - x1
+        const boxHeight = y2 - y1
+        const centerX = x1 + boxWidth / 2
+        const centerY = y1 + boxHeight / 2
+
+        yield {
+            x: centerX,
+            y: centerY,
+            score: (scores[index] * 100).toFixed(2)
+        }
     }
 }
 
@@ -66,17 +86,11 @@ self.onmessage = async ({ data }) => {
 
     for (const prediction of processPrediction(inferenceResults, width, height)){
         console.log({ prediction })
+        postMessage({
+            type: 'prediction',
+            ...prediction
+        });
     }
-    
-    
-    postMessage({
-        type: 'prediction',
-        x: 400,
-        y: 400,
-        score: 0
-    });
-
-
 };
 
 console.log('🧠 YOLOv5n Web Worker initialized');
